@@ -76,38 +76,38 @@ bool initBluetooth();
 char *bda2str(const uint8_t* bda, char *str, size_t size);
 uint8_t errorCount = 0;
 uint8_t queryFlag = 0;
-uint8_t loopCount = 0;
+uint16_t loopCount = 0;
 
 void setup()
 {
 
   //create heatscale
   int j=0;
-  for(j=0;j<140;j++)
+  for(j=0;j<255;j++)
   {
-    if(j>=0 && j<=40)
+    if(j>=0 && j<=90)
     {
       HeatScale[j].B = 1000;
       HeatScale[j].R = 0;
       HeatScale[j].G = 0; 
     }
-    if(j>40 && j<=80)
-    {
-      HeatScale[j].B = 1000;
-      HeatScale[j].R = (j-40)*25;
-      HeatScale[j].G = (j-40)*25; 
-    }
-    if(j>80 && j<=110)
-    {
-      HeatScale[j].B = 990-(j-80)*33;
-      HeatScale[j].R = 1000;
-      HeatScale[j].G = 1000; 
-    }
-    if(j>110 && j<140)
+    if(j>90 && j<=120)
     {
       HeatScale[j].B = 0;
       HeatScale[j].R = 1000;
-      HeatScale[j].G = 1000-(j-110)*33; 
+      HeatScale[j].G = 1000; 
+    }
+    if(j>120 && j<=145)
+    {
+      HeatScale[j].B = 0;
+      HeatScale[j].R = 1000;
+      HeatScale[j].G = 200; 
+    }
+    if(j>145 && j<255)
+    {
+      HeatScale[j].B = 0;
+      HeatScale[j].R = 1000;
+      HeatScale[j].G = 0; 
     }
   }
 
@@ -141,7 +141,7 @@ void setup()
       ledcWrite(i, 1024);
     }
 
-  for(i=0;i<140;i++)
+  for(i=0;i<255;i++)
   {
     setRGBLEDColor(RIGHT_RGB,HeatScale[i].R,HeatScale[i].G,HeatScale[i].B,1);
     setRGBLEDColor(LEFT_RGB,HeatScale[i].R,HeatScale[i].G,HeatScale[i].B,1);
@@ -188,13 +188,13 @@ void loop()
 {
   /*-------------------------START OF MAIN LOOP--------------------------*/
   loopCount++;
-  loopCount%=255;
-  if(loopCount%200 == 0)
+  loopCount%=25500;
+  if(loopCount%20000 == 0)
   {
-   currentBrightnessTarget = getBackgroundLightLevel();
+   //currentBrightnessTarget = getBackgroundLightLevel();
   }
-
-  if(loopCount%200 == 0)
+  setSingleLEDValue(STATUS_LED,0,0);
+  if(loopCount%20000 == 0)
   {
     switch (queryFlag)
     {
@@ -209,7 +209,7 @@ void loop()
       MY_ENGINE_RPM = myELM327.rpm();
       break;
     case 3:
-      MY_REGEN_COUNT =myELM327.processPID(0x22,0x0432,1,2,1,0);
+      MY_REGEN_COUNT = myELM327.processPID(0x22,0x0432,1,2,1,0);
       break;
     case 4:
       MY_REGEN_STATE = myELM327.processPID(0x22,0x0380,1,1,1,0);
@@ -219,7 +219,7 @@ void loop()
     }
     if(myELM327.nb_rx_state == ELM_SUCCESS)
     {
-      setSingleLEDValue(STATUS_LED,1024,1);
+      setSingleLEDValue(STATUS_LED,1020,1);
       setSingleLEDValue(WARNING_LED,0,0);
       queryFlag++;
       queryFlag%=5;
@@ -237,6 +237,7 @@ void loop()
       
       setRGBLEDColor(LEFT_RGB,HeatScale[MY_ENGINE_OIL_TEMP+40].R,HeatScale[MY_ENGINE_OIL_TEMP+40].G,HeatScale[MY_ENGINE_OIL_TEMP+40].B,0.03+50*currentBrightnessTarget);
       setRGBLEDColor(RIGHT_RGB,HeatScale[MY_ENGINE_COOLANT_TEMP+40].R,HeatScale[MY_ENGINE_COOLANT_TEMP+40].G,HeatScale[MY_ENGINE_COOLANT_TEMP+40].B,0.03+50*currentBrightnessTarget);
+      setSingleLEDValue(STATUS_LED,0,0);
       if(MY_REGEN_STATE != 0)
       {
         setSingleLEDValue(DPF_LED,1020,1);
