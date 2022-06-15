@@ -85,25 +85,25 @@ void setup()
   int j=0;
   for(j=0;j<255;j++)
   {
-    if(j>=0 && j<=90)
+    if(j>=0 && j<=90) //from -40C to +50C BLUE
     {
       HeatScale[j].B = 1000;
       HeatScale[j].R = 0;
       HeatScale[j].G = 0; 
     }
-    if(j>90 && j<=120)
+    if(j>90 && j<=120) //from +50C to 80C YELLOW
     {
       HeatScale[j].B = 0;
       HeatScale[j].R = 1000;
       HeatScale[j].G = 1000; 
     }
-    if(j>120 && j<=145)
+    if(j>120 && j<=145) //from +80C to 105C RED-ORANGE
     {
       HeatScale[j].B = 0;
       HeatScale[j].R = 1000;
       HeatScale[j].G = 200; 
     }
-    if(j>145 && j<255)
+    if(j>145 && j<255) //above 105C RED
     {
       HeatScale[j].B = 0;
       HeatScale[j].R = 1000;
