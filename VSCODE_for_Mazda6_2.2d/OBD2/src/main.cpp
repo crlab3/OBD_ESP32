@@ -260,7 +260,7 @@ void loop()
   }
 
   /*If too much errors occur without a single good received data.*/
-  if(errorCount>30)
+  if(errorCount>40)
   {
     ESP.restart();
   }
